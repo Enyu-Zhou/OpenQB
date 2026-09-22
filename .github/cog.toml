@@ -1,0 +1,14 @@
+ignore_merge_commits = true
+scopes = []
+
+# 空配置禁用默认类型，仅保留 chore 和 ci。
+[commit_types]
+feat = {}
+fix = {}
+perf = {}
+revert = {}
+docs = {}
+test = {}
+build = {}
+refactor = {}
+style = {}
