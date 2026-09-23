@@ -28,37 +28,36 @@
 | `type` | 题目类型，第一个位置参数，必填 | `str`：<br>`"single-choice"`：单选题<br>`"multiple-choice"`：多选题<br>`"fill-in"`：填空题<br>`"solution"`：解答题 |
 | `stem` | 题干 | `content` |
 | `choices` | 选项 | `array<content>` |
-| `answers` | 按空或小问顺序排列的答案，默认 `()` | `array<content>` |
+| `answers` | 答案，默认 `()` | `array<content>` |
 | `explanation` | 解析，默认 `[]` | `content` |
 
-- 题号自动生成，不手动填写。
 - 行内公式与文字间留一个半角空格，与标点、内容块边界间不加空格。
 - 数学题目公式内使用英文标点，公式外使用中文标点，Typst 语法除外。
 
 ### 题干
 
-写作 `stem: [题干内容]`。单选、多选题干须包含 `#choice-placeholder()`。
+- 单选、多选题：题干须有且仅有一个 `#choice-placeholder()`。
+- 填空题：使用 `#fill-placeholder()`。
 
 ### 选项
 
-写作 `choices: ([选项内容], [选项内容])`，编号自动生成。
+选项编号自动生成。
 
 ### 答案
 
-按空或小问顺序填写，如 `answers: ([$1$], [$2$])`；每项对应一个空或小问，等价写法放在同一项。
-
 - 单选题：答案须为一个有效选项编号，如 `answers: ([B],)`。
-- 多选题：选项字母合写，如 `answers: ([AC],)`。
+- 多选题：一个或多个有效选项字母合写在一个答案项中，不可重复，如 `answers: ([AC],)`。
+- 填空、解答题：按空或小问顺序填写，每项对应一个空或小问，等价写法放在同一项。
 
 ### 解析
 
-写作 `explanation: [推导过程]`，较长时按步骤分行，可跨页。
+较长时按步骤分行，可跨页。
 
 ## Commit
 
 ### 格式化与检查
 
-依次执行以下脚本：
+在项目根目录依次执行以下脚本，确保全部通过：
 
 ```sh
 # 格式化 Typst 文件
@@ -68,10 +67,6 @@
 # 编译试卷 PDF
 ./scripts/build.sh
 ```
-
-路径按当前位置调整；在 `scripts/` 中可直接执行 `./format.sh`、`./lint.sh` 和 `./build.sh`。
-
-提交前应确保 `./scripts/lint.sh` 和 `./scripts/build.sh` 均通过。
 
 ### Commit message
 

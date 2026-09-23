@@ -1,19 +1,26 @@
 #let choice-placeholder() = box[#metadata("choice-placeholder")（#h(1.5em)）]
 
-#let has-choice-placeholder(value) = {
+#let fill-placeholder() = box[
+  #metadata("fill-placeholder")
+  #underline(stroke: 0.5pt, offset: 0.15em)[#box(width: 5em, repeat(sym.space))]
+]
+
+#let count-placeholders(value, kind) = {
   if std.type(value) == content {
     if value.func() == metadata {
-      return value.value == "choice-placeholder"
+      return if value.value == kind { 1 } else { 0 }
     }
-    return has-choice-placeholder(value.fields())
+    return count-placeholders(value.fields(), kind)
   }
   if std.type(value) == dictionary {
-    return value.values().any(has-choice-placeholder)
+    return count-placeholders(value.values(), kind)
   }
   if std.type(value) == array {
-    return value.any(has-choice-placeholder)
+    return value.fold(0, (total, item) => (
+      total + count-placeholders(item, kind)
+    ))
   }
-  false
+  0
 }
 
 #let render-choices(choices) = layout(size => {
@@ -56,8 +63,8 @@
     message: "Choice questions require non-empty choices",
   )
   assert(
-    has-choice-placeholder(stem),
-    message: "Choice question stem must contain choice-placeholder()",
+    count-placeholders(stem, "choice-placeholder") == 1,
+    message: "Choice question stem must contain exactly one choice-placeholder()",
   )
 }
 
@@ -72,6 +79,29 @@
       answers.first() == [#numbering("A", index + 1)]
     )),
     message: "Single-choice answer must match an existing choice label",
+  )
+}
+
+// 多选题允许选择一个或多个选项，字母合写且不可重复。
+#let validate-multiple-choice(choices, answers) = {
+  assert(
+    answers.len() == 1,
+    message: "Multiple-choice questions require exactly one answer",
+  )
+  let answer = answers.first()
+  assert(
+    answer.func() == text,
+    message: "Multiple-choice answer must be non-empty choice letters",
+  )
+  let letters = answer.text.clusters()
+  let labels = range(choices.len()).map(index => numbering("A", index + 1))
+  assert(
+    letters.len() > 0 and letters.all(letter => letter in labels),
+    message: "Multiple-choice answer must contain only existing choice labels",
+  )
+  assert(
+    letters.dedup().len() == letters.len(),
+    message: "Multiple-choice answer must not contain duplicate labels",
   )
 }
 
@@ -95,6 +125,20 @@
   }
   if type == "single-choice" {
     validate-single-choice(choices, answers)
+  }
+  if type == "multiple-choice" {
+    validate-multiple-choice(choices, answers)
+  }
+  if type == "fill-in" {
+    let blanks = count-placeholders(stem, "fill-placeholder")
+    assert(
+      blanks > 0,
+      message: "Fill-in question stem must contain fill-placeholder()",
+    )
+    assert(
+      answers.len() == blanks,
+      message: "Fill-in answers must match the number of placeholders",
+    )
   }
   counter("question").step()
   block(above: 1.5em, below: 1.5em, breakable: true, context enum(
