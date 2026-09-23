@@ -76,4 +76,6 @@
 
 ### CI
 
+每次 push 和 PR 都会通过 Homebrew 安装其收录的最新稳定版工具，并运行 `./scripts/lint.sh` 和 `./scripts/build.sh`，两者均须通过。
+
 Cocogitto 检查本次 push 或整个 PR 的提交，仅豁免 merge 提交。不符合格式、类型或 scope 规则时检查失败；小写和中文要求由人工评审。
