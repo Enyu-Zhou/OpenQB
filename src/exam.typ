@@ -30,7 +30,14 @@
       ),
     message: "regions must be a non-empty array of non-empty strings",
   )
-  set page(paper: "a4", margin: 20mm)
+  set page(
+    paper: "a4",
+    margin: 20mm,
+    numbering: (current, total) => text(
+      size: 9pt,
+    )[第 #current 页（共 #total 页）],
+    number-align: center + bottom,
+  )
   set text(
     font: (
       (name: "New Computer Modern", covers: "latin-in-cjk"),
