@@ -21,7 +21,7 @@ cd OpenQB
 ./scripts/build.sh
 ```
 
-将 `questions/` 下的所有 `.typ` 试卷编译为 PDF，输出到 `output/pdf/`，保留原目录层级。
+将 `questions/` 下的试卷按原目录结构输出到 `output/pdf/`，生成 `原文件名.pdf` 和 `原文件名-解析版.pdf`。
 
 ## 许可协议
 
