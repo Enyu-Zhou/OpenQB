@@ -45,15 +45,13 @@
     ),
     size: 10.5pt,
     lang: "zh",
-  )
-  set par(leading: 0.8em)
-  // 行内公式使用 display 样式，但仍保留在当前行。
-  show math.equation.where(block: false): math.display
-  // 按行内公式实际高度排版，避免分式和大括号跨行重叠。
-  show math.equation.where(block: false): set text(
+    // 正文和公式统一按实际边界计算行高。
     top-edge: "bounds",
     bottom-edge: "bounds",
   )
+  set par(leading: 0.5em)
+  // 行内公式使用 display 样式，但仍保留在当前行。
+  show math.equation.where(block: false): math.display
   set enum(body-indent: 0.5em)
   counter("section").update(0)
   counter("question").update(0)
