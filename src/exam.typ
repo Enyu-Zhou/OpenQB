@@ -50,6 +50,8 @@
     bottom-edge: "bounds",
   )
   set par(leading: 0.5em)
+  // 圈号使用中文字体，避免西文字体的字形超出占位而挤压相邻文字。
+  show regex("[①-⑳]"): set text(font: "Source Han Serif SC")
   // 行内公式使用 display 样式，但仍保留在当前行。
   show math.equation.where(block: false): math.display
   set enum(body-indent: 0.5em)

@@ -105,7 +105,80 @@
   )
 }
 
-#let question(type, stem: [], choices: (), answers: (), explanation: []) = {
+#let subquestion(stem: [], parts: (), answers: (), explanation: []) = {
+  assert(std.type(stem) == content, message: "Subquestion stem must be content")
+  assert(
+    std.type(answers) == array
+      and answers.all(answer => std.type(answer) == content),
+    message: "Subquestion answers must be an array of content",
+  )
+  assert(
+    std.type(explanation) == content,
+    message: "Subquestion explanation must be content",
+  )
+  assert(
+    std.type(parts) == array,
+    message: "Subquestion parts must be an array",
+  )
+  (stem: stem, parts: parts, answers: answers, explanation: explanation)
+}
+
+// 题干、答案和解析共用同一棵子问树，空内容不占位，编号不重排。
+#let render-parts(parts, field, depth: 0, parent: none) = {
+  assert(
+    parts.len() == 0 or depth < 2,
+    message: "Questions support at most three levels: question, subquestion, nested subquestion",
+  )
+  let rendered = []
+  let first = true
+  for (index, part) in parts.enumerate() {
+    let body = if field == "answers" {
+      part.answers.join([，], default: [])
+    } else {
+      part.at(field)
+    }
+    let label = numbering(if depth == 0 { "(1)" } else { "(i)" }, index + 1)
+    let children = render-parts(
+      part.parts,
+      field,
+      depth: depth + 1,
+      parent: if body == [] { label } else { none },
+    )
+    rendered += if body == [] {
+      children
+    } else {
+      // 空父项的编号并入首个子项，与公式共享同一行基线。
+      let marker = {
+        if parent != none {
+          box(width: 2em, align(left, if first { parent } else { [] }))
+        }
+        box(width: 1.5em, align(left, label))
+      }
+      block(above: 0.6em, below: 0pt, breakable: true, enum(
+        numbering: n => marker,
+        full: false,
+        indent: 0pt,
+        body-indent: 0.5em,
+        {
+          block(above: 0pt, below: 0pt, sticky: children != [])[#body]
+          children
+        },
+      ))
+    }
+    if body != [] or children != [] { first = false }
+  }
+  rendered
+}
+
+#let question(
+  type,
+  stem: [],
+  choices: (),
+  parts: (),
+  answers: (),
+  explanation: [],
+) = {
+  assert(std.type(parts) == array, message: "Question parts must be an array")
   assert(
     std.type(answers) == array
       and answers.all(answer => std.type(answer) == content),
@@ -142,28 +215,34 @@
   }
   counter("question").step()
   block(above: 1.5em, below: 1.5em, breakable: true, context enum(
-    numbering: n => box(width: 2em, numbering("1.", n)),
+    numbering: n => box(width: 1em, align(left, numbering("1.", n))),
+    indent: 1em,
     start: counter("question").get().first(),
     {
       // 题干和选项保持整体，答案与解析允许续页。
-      block(above: 0pt, below: 0pt, breakable: false, {
+      block(above: 0pt, below: 0pt, breakable: false, sticky: parts.len() > 0, {
         stem
         if is-choice {
           render-choices(choices)
         }
       })
+      render-parts(parts, "stem")
       if sys.inputs.at("show-answers", default: "false") == "true" {
-        if answers.len() > 0 {
+        let part-answers = render-parts(parts, "answers")
+        if answers.len() > 0 or part-answers != [] {
           block(above: 1.5em)[
             #strong[【答案】]
 
             #answers.join([，])
+            #part-answers
           ]
         }
-        if explanation != [] {
+        let part-explanations = render-parts(parts, "explanation")
+        if explanation != [] or part-explanations != [] {
           block(above: 1.5em, breakable: true)[
             #block(above: 0pt, below: 1.2em, sticky: true)[#strong[【解析】]]
             #explanation
+            #part-explanations
           ]
         }
       }
