@@ -1,14 +1,12 @@
 ignore_merge_commits = true
-scopes = []
+scopes = ["typst", "questions"]
 
-# 空配置禁用默认类型，仅保留 chore 和 ci。
+# 空配置禁用不使用的默认类型，保留 feat、build、chore 和 ci。
 [commit_types]
-feat = {}
 fix = {}
 perf = {}
 revert = {}
 docs = {}
 test = {}
-build = {}
 refactor = {}
 style = {}

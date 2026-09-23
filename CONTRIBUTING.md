@@ -8,9 +8,12 @@
 | --- | --- | --- |
 | `chore` | 初始化、许可和一般维护 | `chore: 初始化题库项目` |
 | `ci` | CI 配置 | `ci: 添加提交检查` |
+| `feat` | 新功能或题目 | `feat(questions): 录入试卷单选题` |
+| `build` | 构建与工具脚本 | `build: 添加试卷构建脚本` |
 
 - `type` 使用小写，`description` 使用非空中文，冒号后留一个空格。
-- 暂不允许 `scope`；调整类型或范围时，同步更新 [配置](.github/cog.toml) 和本指南。
+- `scope` 可选，支持 `typst`（公共排版与校验）和 `questions`（试卷内容）。
+- 调整类型或范围时，同步更新 [配置](.github/cog.toml) 和本指南。
 
 ## CI
 
