@@ -1,6 +1,61 @@
 #import "/src/lib.typ": (
   cetz, choice-placeholder, exam, fill-placeholder, question, section, step,
+  subquestion,
 )
+// 所有顶点使用三维坐标；中点由端点计算，投影只影响展示。
+#let prism-figure(auxiliary: false) = {
+  set text(size: 9pt)
+  cetz.canvas(length: 13mm, {
+    import cetz.draw: *
+    let a = (2, 0, 0)
+    let b = (0, 2, 0)
+    let c = (0, 0, 0)
+    let a1 = (2, 0, 2)
+    let b1 = (0, 2, 2)
+    let c1 = (0, 0, 2)
+    let d = a.zip(b).map(((x, y)) => (x + y) / 2)
+    let e = a.zip(c1).map(((x, y)) => (x + y) / 2)
+    let h = (0, 1, 0)
+    ortho(x: -65deg, y: 0deg, z: -135deg, sorted: false, {
+      set-style(stroke: 0.65pt)
+      line(a, c, b, stroke: (dash: "dashed"))
+      line(c, c1, stroke: (dash: "dashed"))
+      line(a, c1, stroke: (dash: "dashed"))
+      line(a, b, b1, c1, a1, a)
+      line(a1, b1)
+      line(d, e, stroke: (dash: "dashed"))
+      if auxiliary {
+        for (point, label, anchor) in (
+          ((2.7, 0, 0), $x$, "east"),
+          ((0, 2.7, 0), $y$, "west"),
+          ((0, 0, 2.6), $z$, "south"),
+        ) {
+          let start = point.map(value => if value == 0 { 0 } else { 2 })
+          line(start, point, stroke: 0.4pt, mark: (end: ">"))
+          content(point, label, anchor: anchor, padding: 0.1)
+        }
+        line(b, c1, stroke: (dash: "dashed"))
+        line(d, h, stroke: (dash: "dashed"))
+        line((0.15, 1, 0), (0.15, 1.15, 0), (0, 1.15, 0))
+        content(h, $H$, anchor: "south-west", padding: 0.1)
+      }
+      for (point, label, anchor) in (
+        (a, $A$, if auxiliary { "north" } else { "north-east" }),
+        (b, $B$, if auxiliary { "north" } else { "north-west" }),
+        (c, $C$, "south-west"),
+        (a1, $A_1$, "south-east"),
+        (b1, $B_1$, "south-west"),
+        (c1, $C_1$, if auxiliary { "south-east" } else { "south" }),
+        (d, $D$, "north"),
+        (e, $E$, "east"),
+      ) {
+        content(point, label, anchor: anchor, padding: 0.1)
+      }
+    })
+  })
+}
+
+// 函数图直接采样解析式，标出极大值与零点。
 #let derivative-figure() = {
   set text(size: 9pt)
   cetz.canvas(length: 10mm, {
@@ -144,6 +199,69 @@
 }
 
 // 由边长、平行与垂直条件计算坐标，两个坐标轴使用同一比例。
+#let triangle-figure() = {
+  set text(size: 9pt)
+  cetz.canvas(length: 7mm, {
+    import cetz.draw: *
+    let a = (0, 0)
+    let b = (3, 0)
+    let c = (1, 2 * calc.sqrt(2))
+    let d = (-3 * calc.sqrt(2), 0)
+    let e = (-4 * calc.sqrt(2), 2)
+    set-style(stroke: 0.65pt)
+    line((-6.2, 0), (3.9, 0), stroke: 0.4pt, mark: (end: ">"))
+    line((0, -0.6), (0, 3.5), stroke: 0.4pt, mark: (end: ">"))
+    content((3.9, 0), $x$, anchor: "west", padding: 0.1)
+    content((0, 3.5), $y$, anchor: "east", padding: 0.1)
+    line(e, d, b, c, a, e)
+    line(e, c, stroke: (dash: "dashed"))
+    // 在 A 处标出 AE 与 AC 的直角。
+    let u = c.map(x => x / 3 * 0.25)
+    let v = e.map(x => x / 6 * 0.25)
+    line(u, u.zip(v).map(((x, y)) => x + y), v)
+    for (point, label, anchor) in (
+      (a, $A$, "north-east"),
+      (b, $B$, "north"),
+      (c, $C$, "south"),
+      (d, $D$, "north"),
+      (e, $E$, "south-east"),
+    ) {
+      content(point, label, anchor: anchor, padding: 0.12)
+    }
+  })
+}
+
+// 取第 (2)(i) 问求得的直线；交点由椭圆方程精确计算。
+#let ellipse-figure() = {
+  set text(size: 9pt)
+  cetz.canvas(length: 12mm, {
+    import cetz.draw: *
+    let k = calc.sqrt(5) / 2
+    let p = (0.5, 3 * calc.sqrt(5) / 4)
+    let q = (-1.75, -3 * calc.sqrt(5) / 8)
+    let r = p.map(x => -x)
+    set-style(stroke: 0.65pt)
+    circle((0, 0), radius: (2, calc.sqrt(3)))
+    line((-2.5, 0), (2.5, 0), stroke: 0.4pt, mark: (end: ">"))
+    line((0, -2.1), (0, 2.1), stroke: 0.4pt, mark: (end: ">"))
+    line((-2, -k), (0.85, 1.85 * k))
+    line(p, r, q)
+    line(q, (0, 0), stroke: (dash: "dashed"))
+    for (point, label, anchor) in (
+      ((2.5, 0), $x$, "north"),
+      ((0, 2.1), $y$, "east"),
+      ((0, 0), $O$, "north-west"),
+      ((-1, 0), $F$, "south-east"),
+      (p, $P$, "south-east"),
+      (q, $Q$, "north-east"),
+      (r, $R$, "north-west"),
+      ((0.85, 1.85 * k), $l$, "west"),
+    ) {
+      content(point, label, anchor: anchor, padding: 0.1)
+    }
+  })
+}
+
 #show: exam.with(
   subject: "数学",
   year: 2026,
@@ -475,4 +593,296 @@
       $therefore$ 上界可以取到，最大值为 $root(3, 12)/2$。
     ]
   ],
+)
+
+#section[解答题：本题共 5 小题，共 77 分。解答应写出文字说明、证明过程或演算步骤。]
+
+#question(
+  "solution",
+  stem: [
+    （13 分）如图，在直三棱柱 $A B C - A_1 B_1 C_1$ 中，$angle A C B = 90 degree$，$A C = B C$，$D$、$E$ 分别为 $A B$、$A C_1$ 的中点。
+    #align(center, prism-figure())
+  ],
+  parts: (
+    subquestion(
+      stem: [证明：$D E parallel$ 平面 $B C C_1 B_1$；],
+      answers: ([$D E parallel$ 平面 $B C C_1 B_1$，证明见解析。],),
+      explanation: [
+        连接 $B C_1$。在 $triangle A B C_1$ 中，$D$、$E$ 分别为 $A B$、$A C_1$ 的中点，$therefore D E parallel B C_1$。#linebreak()
+        又 $B C_1 subset$ 平面 $B C C_1 B_1$，$D E subset.not$ 平面 $B C C_1 B_1$，$therefore D E parallel$ 平面 $B C C_1 B_1$。
+      ],
+    ),
+    subquestion(
+      stem: [设 $C C_1 = 2$，直线 $D E$ 与平面 $A C C_1 A_1$ 所成的角为 $45 degree$，求直线 $D E$ 到平面 $B C C_1 B_1$ 的距离。],
+      answers: ([$1$],),
+      explanation: [
+        #step[建立空间直角坐标系][
+          以 $C$ 为原点，$C A$、$C B$、$C C_1$ 的方向分别为三条坐标轴的正方向。#linebreak()
+          设 $A C = B C = a > 0$。#linebreak()
+          则 $A(a, 0, 0)$，$B(0, a, 0)$，$C_1(0, 0, 2)$。#linebreak()
+          两中点为 $D(a/2, a/2, 0)$，$E(a/2, 0, 1)$。
+          #align(center, prism-figure(auxiliary: true))
+        ]
+        #step[利用线面角求边长][
+          平面 $A C C_1 A_1$ 的法向量为 $(0, 1, 0)$，而 $arrow(D E) = (0, -a/2, 1)$。#linebreak()
+          由线面角为 $45 degree$，得 $sin 45 degree = (a/2)/sqrt(a^2/4 + 1)$，解得 $a = 2$。
+        ]
+        #step[计算线面距离][
+          由第（1）问，只需求点 $D$ 到平面 $B C C_1 B_1$ 的距离。#linebreak()
+          该平面的方程为 $x = 0$，故距离为 $a/2 = 1$。#linebreak()
+          图中 $H$ 为 $D$ 到该平面的垂足，$D H$ 即所求距离。
+        ]
+      ],
+    ),
+  ),
+)
+
+#question(
+  "solution",
+  stem: [（15 分）已知在 $triangle A B C$ 中，$A B = 3$，$B C = 2 sqrt(3)$，$cos B = sqrt(3)/3$。],
+  parts: (
+    subquestion(
+      stem: [求 $cos A$；],
+      answers: ([$1/3$],),
+      explanation: [
+        由余弦定理，$A C^2 = A B^2 + B C^2 - 2 A B dot B C cos B = 9 + 12 - 12 = 9$，$therefore A C = 3$。#linebreak()
+        再由余弦定理，$cos A = (A B^2 + A C^2 - B C^2)/(2 A B dot A C) = (9 + 9 - 12)/18 = 1/3$。
+      ],
+    ),
+    subquestion(
+      stem: [设 $D$、$E$ 两点满足：$D$ 在 $B A$ 的延长线上，$D E parallel B C$，$A E perp A C$。若 $D E = sqrt(6)$，求 $C E$。],
+      answers: ([$3 sqrt(5)$],),
+      explanation: [
+        #step[建立平面直角坐标系][
+          以 $A$ 为原点，$A B$ 的方向为 $x$ 轴正方向，取 $C$ 在 $x$ 轴上方，则 $A(0, 0)$，$B(3, 0)$。#linebreak()
+          由 $A C = 3$、$cos A = 1/3$，得 $C(1, 2 sqrt(2))$。
+          #align(center, triangle-figure())
+        ]
+        #step[确定点 $E$][
+          设 $D(-t, 0)$（$t > 0$）。#linebreak()
+          由 $D E parallel B C$，可设 $arrow(D E) = lambda (-2, 2 sqrt(2))$。#linebreak()
+          于是 $E(-t - 2 lambda, 2 sqrt(2) lambda)$。#linebreak()
+          由 $A E perp A C$，得 $(-t - 2 lambda) + 8 lambda = 0$，即 $lambda = t/6 > 0$。#linebreak()
+          $therefore D E = 2 sqrt(3) lambda = sqrt(3)t/3 = sqrt(6)$，解得 $t = 3 sqrt(2)$，$lambda = sqrt(2)/2$。
+        ]
+        #step[计算 $C E$][
+          代入得 $E(-4 sqrt(2), 2)$。#linebreak()
+          由两点间距离公式，#linebreak()
+          $C E = sqrt((1 + 4 sqrt(2))^2 + (2 sqrt(2) - 2)^2) = 3 sqrt(5)$。
+        ]
+      ],
+    ),
+  ),
+)
+
+#question(
+  "solution",
+  stem: [（15 分）设整数 $N >= 2$。某同学用一个球进行投篮练习，至多投篮 $N$ 次，当且仅当投中 $1$ 次时或 $N$ 次均未投中时，停止练习。设该同学每次投中的概率为 $p$（$0 < p < 1$），各次投中与否相互独立。记 $X$ 为停止练习时该同学的投篮次数。],
+  parts: (
+    subquestion(
+      stem: [当 $N = 4$，$p = 1/3$ 时，求 $X$ 的分布列；],
+      answers: (
+        [
+          #table(
+            columns: 5,
+            align: center,
+            inset: 0.6em,
+            stroke: 0.5pt,
+            [$X$], [$1$], [$2$], [$3$], [$4$],
+            [$P$], [$1/3$], [$2/9$], [$4/27$], [$8/27$],
+          )
+        ],
+      ),
+      explanation: [
+        当 $j = 1, 2, 3$ 时，$X = j$ 表示前 $j - 1$ 次未投中、第 $j$ 次投中。#linebreak()
+        $therefore P(X = j) = (2/3)^(j - 1) dot 1/3$。#linebreak()
+        $X = 4$ 当且仅当前三次均未投中，第四次无论是否投中都停止。#linebreak()
+        $therefore P(X = 4) = (2/3)^3 = 8/27$。#linebreak()
+        四个概率之和为 $1/3 + 2/9 + 4/27 + 8/27 = 1$，分布列如答案所示。
+      ],
+    ),
+    subquestion(
+      stem: [设 $k$、$m$ 均为自然数。],
+      parts: (
+        subquestion(
+          stem: [当 $k <= N - 1$ 时，求 $P(X > k)$；],
+          answers: ([$(1 - p)^k$],),
+          explanation: [
+            当 $0 <= k <= N - 1$ 时，$X > k$ 当且仅当前 $k$ 次均未投中，$therefore P(X > k) = (1 - p)^k$。#linebreak()
+            $k = 0$ 时事件必然发生，公式也成立。
+          ],
+        ),
+        subquestion(
+          stem: [当 $k + m <= N - 1$ 时，证明：$P(X > k + m | X > k) = P(X > m)$。],
+          answers: ([$P(X > k + m | X > k) = P(X > m)$，证明见解析。],),
+          explanation: [
+            $because {X > k + m} subset.eq {X > k}$，且 $P(X > k) = (1 - p)^k > 0$，#linebreak()
+            $therefore P(X > k + m | X > k) = P(X > k + m)/P(X > k) = (1 - p)^(k + m)/(1 - p)^k = (1 - p)^m$。#linebreak()
+            又 $m <= N - 1$，由（i）知右端等于 $P(X > m)$，结论成立。
+          ],
+        ),
+      ),
+    ),
+  ),
+)
+
+#question(
+  "solution",
+  stem: [（17 分）已知椭圆 $C: x^2/a^2 + y^2/b^2 = 1$（$a > b > 0$）的左焦点为 $F(-1, 0)$，离心率为 $1/2$。],
+  parts: (
+    subquestion(
+      stem: [求 $C$ 的方程；],
+      answers: ([$x^2/4 + y^2/3 = 1$],),
+      explanation: [
+        由左焦点为 $F(-1, 0)$，得 $c = 1$。又 $c/a = 1/2$，$therefore a = 2$，$b^2 = a^2 - c^2 = 3$。#linebreak()
+        $therefore$ 椭圆的方程为 $x^2/4 + y^2/3 = 1$。
+      ],
+    ),
+    subquestion(
+      stem: [设 $O$ 为坐标原点，过 $F$ 且斜率大于 $0$ 的动直线 $l$ 与 $C$ 交于 $P$、$Q$ 两点，其中 $Q$ 在第三象限，直线 $P O$ 与 $C$ 的另一个交点为 $R$。],
+      parts: (
+        subquestion(
+          stem: [若 $triangle P Q R$ 的面积是 $triangle P F O$ 的面积的 $3$ 倍，求 $l$ 的方程；],
+          answers: ([$y = sqrt(5)/2 (x + 1)$],),
+          explanation: [
+            #step[将面积关系转化为坐标关系][
+              $F$ 在线段 $P Q$ 上，且 $O F = 1$，故#linebreak()
+              $S_(triangle P Q O) = S_(triangle P F O) + S_(triangle Q F O) = (y_1 - y_2)/2$。#linebreak()
+              又 $O$ 是 $P R$ 的中点，故 $S_(triangle P Q R) = 2 S_(triangle P Q O) = y_1 - y_2$。#linebreak()
+              又 $S_(triangle P F O) = y_1/2$。#linebreak()
+              由面积比为 $3$，得 $y_1 = -2y_2$。#linebreak()
+              代入 $y_i = k(x_i + 1)$，得 $x_1 + 2x_2 = -3$。
+            ]
+            #step[利用韦达定理求斜率][
+              令 $u = k^2$，结合根的和得 $x_1 = (9 - 4u)/(3 + 4u)$，$x_2 = -(9 + 4u)/(3 + 4u)$。#linebreak()
+              再代入根的积，得#linebreak()
+              $-(9 - 4u)(9 + 4u)/(3 + 4u)^2 = (4u - 12)/(3 + 4u)$。#linebreak()
+              解得 $u = 5/4$。#linebreak()
+              $because k > 0$，$therefore k = sqrt(5)/2$，即 $l: y = sqrt(5)/2 (x + 1)$。
+            ]
+          ],
+        ),
+        subquestion(
+          stem: [求 $tan angle P Q R$ 的最小值。],
+          answers: ([$4 sqrt(3)$],),
+          explanation: [
+            #step[求斜率并判断夹角][
+              $Q R$ 的斜率为 $(-y_1 - y_2)/(-x_1 - x_2) = k(x_1 + x_2 + 2)/(x_1 + x_2) = -3/(4k)$。#linebreak()
+              向量 $arrow(Q P)$、$arrow(Q R)$ 的横坐标均为正。#linebreak()
+              又斜率之积为 $-3/4 > -1$，$therefore$ 两向量的数量积为正。#linebreak()
+              $therefore angle P Q R$ 为锐角。
+            ]
+            #step[求正切值的最小值][
+              由两直线夹角公式，#linebreak()
+              $tan angle P Q R = (k + 3/(4k))/(1 - 3/4) = 4k + 3/k$。#linebreak()
+              由基本不等式，$4k + 3/k >= 2 sqrt(4k dot 3/k) = 4 sqrt(3)$。#linebreak()
+              当且仅当 $4k = 3/k$，即 $k = sqrt(3)/2$ 时取等号，故最小值为 $4 sqrt(3)$。
+            ]
+          ],
+        ),
+      ),
+      explanation: [
+        设 $l: y = k(x + 1)$（$k > 0$），$P(x_1, y_1)$、$Q(x_2, y_2)$，则 $y_1 > 0 > y_2$，$x_1 > x_2$。#linebreak()
+        由椭圆的中心对称性，$R(-x_1, -y_1)$。联立直线与椭圆方程，得#linebreak()
+        $(3 + 4k^2)x^2 + 8k^2 x + 4k^2 - 12 = 0$，#linebreak()
+        $therefore x_1 + x_2 = -(8k^2)/(3 + 4k^2)$，$x_1 x_2 = (4k^2 - 12)/(3 + 4k^2)$。#linebreak()
+        下图取（i）求得的直线，展示 $P$、$Q$、$R$、$F$、$O$ 的位置关系。
+        #align(center, ellipse-figure())
+      ],
+    ),
+  ),
+)
+
+#question(
+  "solution",
+  stem: [（17 分）已知函数 $f(x)$ 的定义域为 $RR$，且当 $x < 0$ 时，$f(x) = 2^x$。对任意 $x_0 in RR$，定义集合 $D(x_0) = {d in RR | f(x_0 + d) > f(x_0)}$。],
+  parts: (
+    subquestion(
+      stem: [若当 $x >= 0$ 时，$f(x) = 1 - x$，求 $D(-1)$；],
+      answers: ([$(0, 3/2)$],),
+      explanation: [
+        $f(-1) = 1/2$，需解 $f(-1 + d) > 1/2$。#linebreak()
+        当 $d < 1$ 时，$2^(-1 + d) > 2^(-1)$，得 $0 < d < 1$。#linebreak()
+        当 $d >= 1$ 时，$2 - d > 1/2$，得 $1 <= d < 3/2$。#linebreak()
+        合并得 $D(-1) = (0, 3/2)$。
+      ],
+    ),
+    subquestion(
+      stem: [若 $f(x)$ 是奇函数，$f(x_1) <= f(x_2)$，且 $x_1 x_2 != 0$，证明：$D(x_2) subset.eq D(x_1)$；],
+      answers: ([$D(x_2) subset.eq D(x_1)$，证明见解析。],),
+      explanation: [
+        #step[求集合 $D(x)$][
+          由奇函数性质，$f(0) = 0$，且当 $x > 0$ 时，$f(x) = -2^(-x)$。#linebreak()
+          $f$ 在负半轴和正半轴上分别递增。#linebreak()
+          当 $x < 0$ 时，$f(x) > 0$。#linebreak()
+          比它大的函数值只能出现在 $(x, 0)$，$therefore D(x) = (0, -x)$。#linebreak()
+          当 $x > 0$ 时，$f(x) < 0$。#linebreak()
+          此时 $f(x + d) > f(x)$ 等价于 $x + d <= 0$ 或 $x + d > x$。#linebreak()
+          $therefore D(x) = (-infinity, -x] union (0, +infinity)$。
+        ]
+        #step[分类比较集合的包含关系][
+          若 $x_1, x_2 < 0$，由 $f(x_1) <= f(x_2)$ 得 $x_1 <= x_2$。#linebreak()
+          $therefore D(x_2) = (0, -x_2) subset.eq (0, -x_1) = D(x_1)$。#linebreak()
+          若 $x_1, x_2 > 0$，同样有 $x_1 <= x_2$，$therefore (-infinity, -x_2] subset.eq (-infinity, -x_1]$。#linebreak()
+          两边与 $(0, +infinity)$ 取并集，得 $D(x_2) subset.eq D(x_1)$。#linebreak()
+          若两者异号，则只能是 $x_1 > 0 > x_2$。#linebreak()
+          此时 $D(x_2) = (0, -x_2) subset.eq (0, +infinity) subset.eq D(x_1)$。#linebreak()
+          综上，$D(x_2) subset.eq D(x_1)$。
+        ]
+      ],
+    ),
+    subquestion(
+      stem: [设 $f(x)$ 满足：① 若 $f(x_1) <= f(x_2)$，则 $D(x_2) subset.eq D(x_1)$；② 当 $0 < x < 1$ 时，$f(x) < f(0)$。],
+      parts: (
+        subquestion(
+          stem: [证明：$f(0) >= 1$；],
+          answers: ([$f(0) >= 1$，证明见解析。],),
+          explanation: [
+            假设 $f(0) < 1$。#linebreak()
+            当 $t$ 从左侧趋近 $0$ 时，$2^t$ 趋近 $1$。#linebreak()
+            $therefore$ 可取 $t in (-1, 0)$，使 $f(t) = 2^t > f(0)$。#linebreak()
+            由条件①，$D(t) subset.eq D(0)$。#linebreak()
+            令 $d = -t/2 in (0, 1/2)$，则 $t + d = t/2 < 0$。#linebreak()
+            于是 $f(t + d) = 2^(t/2) > 2^t = f(t)$。#linebreak()
+            $therefore d in D(t) subset.eq D(0)$，从而 $f(d) > f(0)$。#linebreak()
+            但由条件②，$f(d) < f(0)$，矛盾。$therefore f(0) >= 1$。
+          ],
+        ),
+        subquestion(
+          stem: [证明：$f(x)$ 在区间 $(0, +infinity)$ 单调递增。],
+          answers: ([$f(x)$ 在 $(0, +infinity)$ 单调递增，证明见解析。],),
+          explanation: [
+            只需证明：任取 $x > 0$、$h > 0$，都有 $h in D(x)$。#linebreak()
+            先证正半轴上 $f(x) <= 0$，再利用条件①比较 $D(x)$ 与负半轴对应的集合。
+            #step[证明区间内的函数值非正][
+              假设存在 $x in (0, 1)$，使 $f(x) > 0$。#linebreak()
+              取 $t < 0$，使 $0 < f(t) = 2^t < f(x)$。#linebreak()
+              由条件①，$D(x) subset.eq D(t)$。#linebreak()
+              由条件②，$f(0) > f(x)$，$therefore -x in D(x)$，从而 $-x in D(t)$。#linebreak()
+              但 $t - x < t < 0$，$therefore f(t - x) < f(t)$，即 $-x in.not D(t)$，矛盾。#linebreak()
+              $therefore 0 < x < 1$ 时，$f(x) <= 0$。
+            ]
+            #step[推广到所有正数][
+              假设存在 $s >= 1$，使 $f(s) > 0$。#linebreak()
+              取 $u in (0, 1)$，再取 $b < 0$，使 $f(b) = 2^b < f(s)$。#linebreak()
+              令 $a = b - (s - u) < b < 0$，$d = s - b$。#linebreak()
+              此时 $b + d = s$，$a + d = u$。#linebreak()
+              $because f(b + d) = f(s) > f(b)$，$therefore d in D(b)$。#linebreak()
+              又 $f(a) < f(b)$，由条件①得 $D(b) subset.eq D(a)$。#linebreak()
+              $therefore d in D(a)$，即 $f(u) = f(a + d) > f(a) = 2^a > 0$。#linebreak()
+              这与上一步的 $f(u) <= 0$ 矛盾。#linebreak()
+              $therefore$ 所有 $x > 0$ 均有 $f(x) <= 0$。
+            ]
+            #step[证明单调递增][
+              任取 $x > 0$、$h > 0$，再取 $t < -h$。#linebreak()
+              $because f(x) <= 0 < f(t)$，由条件①得 $D(t) subset.eq D(x)$。#linebreak()
+              $because t < t + h < 0$，$therefore f(t + h) > f(t)$。#linebreak()
+              $therefore h in D(t) subset.eq D(x)$，即 $f(x + h) > f(x)$。#linebreak()
+              $therefore f(x)$ 在 $(0, +infinity)$ 上单调递增。
+            ]
+          ],
+        ),
+      ),
+    ),
+  ),
 )
