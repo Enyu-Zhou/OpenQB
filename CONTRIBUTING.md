@@ -42,6 +42,23 @@
 
 ## Commit
 
+### 格式化与检查
+
+依次执行以下脚本：
+
+```sh
+# 格式化 Typst 文件
+./scripts/format.sh
+# 检查格式和试卷代码
+./scripts/lint.sh
+# 编译试卷 PDF
+./scripts/build.sh
+```
+
+路径按当前位置调整；在 `scripts/` 中可直接执行 `./format.sh`、`./lint.sh` 和 `./build.sh`。
+
+提交前应确保 `./scripts/lint.sh` 和 `./scripts/build.sh` 均通过。
+
 ### Commit message
 
 提交遵循 [Conventional Commits](https://docs.cocogitto.io/guide/commit.html)，每次只包含一个明确目的的改动。
