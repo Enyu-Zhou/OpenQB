@@ -1,6 +1,6 @@
 #import "/src/lib.typ": (
-  cetz, choice-placeholder, exam, fill-placeholder, oblique-project, plot,
-  question, section, space-axes, step, subquestion,
+  cetz, choice-placeholder, exam, figure-style, fill-placeholder,
+  oblique-project, plot, question, section, space-axes, step, subquestion,
 )
 
 #show: exam.with(
@@ -37,12 +37,23 @@
   cetz.canvas(length: 10mm, {
     import cetz.draw: *
     set-style(axes: (
-      stroke: 0.6pt,
+      stroke: figure-style.thickness,
       padding: 0,
       overshoot: 0.35,
       shared-zero: $O$,
-      tick: (length: 0, label: (offset: 0.12)),
-      grid: (stroke: (paint: black, dash: "dashed", thickness: 0.6pt)),
+      tick: (
+        stroke: figure-style.thickness,
+        minor-stroke: figure-style.thickness,
+        length: 0,
+        label: (offset: 0.12),
+      ),
+      grid: (
+        stroke: (
+          paint: black,
+          dash: figure-style.dash,
+          thickness: figure-style.thickness,
+        ),
+      ),
       x: (overshoot: 0.65, label: (anchor: "north-west", offset: 0.15)),
       y: (label: (anchor: "south", offset: -0.15)),
     ))
@@ -77,7 +88,11 @@
             if height >= level {
               if start < left {
                 plot.add-hline(level, min: start, max: left, style: (
-                  stroke: (paint: black, dash: "dashed", thickness: 0.6pt),
+                  stroke: (
+                    paint: black,
+                    dash: figure-style.dash,
+                    thickness: figure-style.thickness,
+                  ),
                 ))
               }
               start = left + 10
@@ -85,12 +100,16 @@
           }
           if start < 425 {
             plot.add-hline(level, min: start, max: 425, style: (
-              stroke: (paint: black, dash: "dashed", thickness: 0.6pt),
+              stroke: (
+                paint: black,
+                dash: figure-style.dash,
+                thickness: figure-style.thickness,
+              ),
             ))
           }
         }
         plot.annotate(resize: false, {
-          set-style(stroke: 0.6pt)
+          set-style(stroke: figure-style.thickness)
           for (i, height) in heights.enumerate() {
             line((345 + 10 * i, height), (355 + 10 * i, height))
           }
@@ -118,9 +137,13 @@
     let a = (2, 0, calc.sqrt(2))
     // 斜投影保留真实点位，使 BD 水平、AE 竖直，C 位于原卷的斜下方。
     oblique-project((-1, 0), (-0.36, -0.27), (0, 1.5), {
-      set-style(stroke: (thickness: 0.6pt, join: "round", cap: "butt"))
-      line(b, d, stroke: (dash: "dashed"))
-      line(a, e, c, stroke: (dash: "dashed"))
+      set-style(stroke: (
+        thickness: figure-style.thickness,
+        join: "round",
+        cap: "butt",
+      ))
+      line(b, d, stroke: (dash: figure-style.dash))
+      line(a, e, c, stroke: (dash: figure-style.dash))
       line(a, b, c, d, a, c)
       if auxiliary {
         space-axes(

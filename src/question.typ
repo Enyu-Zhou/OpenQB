@@ -107,7 +107,13 @@
   )
 }
 
-#let subquestion(stem: [], parts: (), answers: (), explanation: []) = {
+#let subquestion(
+  score: none,
+  stem: [],
+  parts: (),
+  answers: (),
+  explanation: [],
+) = {
   assert(std.type(stem) == content, message: "Subquestion stem must be content")
   assert(
     std.type(answers) == array
@@ -122,7 +128,13 @@
     std.type(parts) == array,
     message: "Subquestion parts must be an array",
   )
-  (stem: stem, parts: parts, answers: answers, explanation: explanation)
+  (
+    score: score,
+    stem: stem,
+    parts: parts,
+    answers: answers,
+    explanation: explanation,
+  )
 }
 
 // 题干、答案和解析共用同一棵子问树，空内容不占位，编号不重排。
@@ -137,6 +149,9 @@
     let body = if field == "answers" {
       part.answers.join([，], default: [])
     } else {
+      if field == "stem" and part.at("score", default: none) != none {
+        render-score(part.score)
+      }
       part.at(field)
     }
     let label = numbering(if depth == 0 { "(1)" } else { "(i)" }, index + 1)
@@ -236,8 +251,7 @@
         let part-answers = render-parts(parts, "answers")
         if answers.len() > 0 or part-answers != [] {
           block(above: 1.5em, breakable: false)[
-            #strong[【答案】]
-
+            #block(above: 0pt, below: 1.2em, sticky: true)[#strong[【答案】]]
             #answers.join([，])
             #part-answers
           ]
