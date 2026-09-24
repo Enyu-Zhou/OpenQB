@@ -95,6 +95,7 @@
 | `ci` | CI 配置 | `ci: 添加提交检查` |
 | `feat` | 新功能或题目 | `feat(questions): 录入试卷单选题` |
 | `build` | 构建与工具脚本 | `build: 添加试卷构建脚本` |
+| `refactor` | 不改变功能的代码重构 | `refactor(typst): 集中管理插图样式` |
 
 - `type` 使用小写，`description` 使用非空中文，冒号后留一个空格。
 - `scope` 可选，支持 `typst`（公共排版与校验）和 `questions`（试卷内容）。
