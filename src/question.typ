@@ -216,6 +216,7 @@
       message: "Fill-in answers must match the number of placeholders",
     )
   }
+  show figure: set align(left)
   counter("question").step()
   block(above: 1.5em, below: 1.5em, breakable: true, context enum(
     numbering: n => box(width: 1em, align(left, numbering("1.", n))),
@@ -234,7 +235,7 @@
       if sys.inputs.at("show-answers", default: "false") == "true" {
         let part-answers = render-parts(parts, "answers")
         if answers.len() > 0 or part-answers != [] {
-          block(above: 1.5em)[
+          block(above: 1.5em, breakable: false)[
             #strong[【答案】]
 
             #answers.join([，])
@@ -244,6 +245,7 @@
         let part-explanations = render-parts(parts, "explanation")
         if explanation != [] or part-explanations != [] {
           block(above: 1.5em, breakable: true)[
+            #show figure: set align(center)
             #block(above: 0pt, below: 1.2em, sticky: true)[#strong[【解析】]]
             #explanation
             #part-explanations
