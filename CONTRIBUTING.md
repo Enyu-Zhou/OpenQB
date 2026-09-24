@@ -26,6 +26,7 @@
 | 字段 | 含义 | 类型 | 默认值 |
 | --- | --- | --- | --- |
 | `type` | 题目类型，第一个位置参数 | `str`：<br>`"single-choice"`：单选题<br>`"multiple-choice"`：多选题<br>`"fill-in"`：填空题<br>`"solution"`：解答题 | 必填 |
+| `score` | 分值，由独立的 `score` 组件渲染，不写入题干 | 正数 | `none`（不显示） |
 | `stem` | 题干 | `content` | `[]` |
 | `choices` | 选项 | `array<content>` | `()` |
 | `parts` | 子问 | `array<dictionary>` | `()` |

@@ -4,4 +4,5 @@
 )
 #import "section.typ": section
 #import "step.typ": step
+#import "score.typ": score
 #import "@preview/cetz:0.5.2"

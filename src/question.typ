@@ -1,3 +1,5 @@
+#import "score.typ": score as render-score
+
 #let choice-placeholder() = box[#metadata("choice-placeholder")（#h(1.5em)）]
 
 #let fill-placeholder() = box[
@@ -172,6 +174,7 @@
 
 #let question(
   type,
+  score: none,
   stem: [],
   choices: (),
   parts: (),
@@ -221,6 +224,7 @@
     {
       // 题干和选项保持整体，答案与解析允许续页。
       block(above: 0pt, below: 0pt, breakable: false, sticky: parts.len() > 0, {
+        if score != none { render-score(score) }
         stem
         if is-choice {
           render-choices(choices)

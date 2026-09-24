@@ -599,8 +599,8 @@
 
 #question(
   "solution",
-  stem: [
-    （13 分）如图，在直三棱柱 $A B C - A_1 B_1 C_1$ 中，$angle A C B = 90 degree$，$A C = B C$，$D$、$E$ 分别为 $A B$、$A C_1$ 的中点。
+  score: 13,
+  stem: [如图，在直三棱柱 $A B C - A_1 B_1 C_1$ 中，$angle A C B = 90 degree$，$A C = B C$，$D$、$E$ 分别为 $A B$、$A C_1$ 的中点。
     #align(center, prism-figure())
   ],
   parts: (
@@ -639,7 +639,8 @@
 
 #question(
   "solution",
-  stem: [（15 分）已知在 $triangle A B C$ 中，$A B = 3$，$B C = 2 sqrt(3)$，$cos B = sqrt(3)/3$。],
+  score: 15,
+  stem: [已知在 $triangle A B C$ 中，$A B = 3$，$B C = 2 sqrt(3)$，$cos B = sqrt(3)/3$。],
   parts: (
     subquestion(
       stem: [求 $cos A$；],
@@ -677,7 +678,8 @@
 
 #question(
   "solution",
-  stem: [（15 分）设整数 $N >= 2$。某同学用一个球进行投篮练习，至多投篮 $N$ 次，当且仅当投中 $1$ 次时或 $N$ 次均未投中时，停止练习。设该同学每次投中的概率为 $p$（$0 < p < 1$），各次投中与否相互独立。记 $X$ 为停止练习时该同学的投篮次数。],
+  score: 15,
+  stem: [设整数 $N >= 2$。某同学用一个球进行投篮练习，至多投篮 $N$ 次，当且仅当投中 $1$ 次时或 $N$ 次均未投中时，停止练习。设该同学每次投中的概率为 $p$（$0 < p < 1$），各次投中与否相互独立。记 $X$ 为停止练习时该同学的投篮次数。],
   parts: (
     subquestion(
       stem: [当 $N = 4$，$p = 1/3$ 时，求 $X$ 的分布列；],
@@ -728,7 +730,8 @@
 
 #question(
   "solution",
-  stem: [（17 分）已知椭圆 $C: x^2/a^2 + y^2/b^2 = 1$（$a > b > 0$）的左焦点为 $F(-1, 0)$，离心率为 $1/2$。],
+  score: 17,
+  stem: [已知椭圆 $C: x^2/a^2 + y^2/b^2 = 1$（$a > b > 0$）的左焦点为 $F(-1, 0)$，离心率为 $1/2$。],
   parts: (
     subquestion(
       stem: [求 $C$ 的方程；],
@@ -795,7 +798,8 @@
 
 #question(
   "solution",
-  stem: [（17 分）已知函数 $f(x)$ 的定义域为 $RR$，且当 $x < 0$ 时，$f(x) = 2^x$。对任意 $x_0 in RR$，定义集合 $D(x_0) = {d in RR | f(x_0 + d) > f(x_0)}$。],
+  score: 17,
+  stem: [已知函数 $f(x)$ 的定义域为 $RR$，且当 $x < 0$ 时，$f(x) = 2^x$。对任意 $x_0 in RR$，定义集合 $D(x_0) = {d in RR | f(x_0 + d) > f(x_0)}$。],
   parts: (
     subquestion(
       stem: [若当 $x >= 0$ 时，$f(x) = 1 - x$，求 $D(-1)$；],
