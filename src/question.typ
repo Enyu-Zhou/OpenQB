@@ -238,15 +238,25 @@
     indent: 1em,
     start: counter("question").get().first(),
     {
-      // 题干和选项保持整体，答案与解析允许续页。
-      block(above: 0pt, below: 0pt, breakable: false, sticky: parts.len() > 0, {
-        if score != none { render-score(score) }
-        stem
-        if is-choice {
-          render-choices(choices)
+      // 一页能容纳的题目保持整体，超长题目及答案、解析允许续页。
+      layout(size => {
+        let body = {
+          block(above: 0pt, below: 0pt, sticky: parts.len() > 0, {
+            if score != none { render-score(score) }
+            stem
+            if is-choice { render-choices(choices) }
+          })
+          render-parts(parts, "stem")
         }
+        // exam 使用统一页边距，扣除上下边距得到整页正文高度。
+        let available = page.height - 2 * page.margin
+        block(
+          above: 0pt,
+          below: 0pt,
+          breakable: measure(body, width: size.width).height > available,
+          body,
+        )
       })
-      render-parts(parts, "stem")
       if sys.inputs.at("show-answers", default: "false") == "true" {
         let part-answers = render-parts(parts, "answers")
         if answers.len() > 0 or part-answers != [] {
