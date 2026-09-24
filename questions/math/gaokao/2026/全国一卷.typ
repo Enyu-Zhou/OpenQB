@@ -1,11 +1,33 @@
 #import "/src/lib.typ": (
-  cetz, choice-placeholder, exam, fill-placeholder, question, section, step,
-  subquestion,
+  cetz, choice-placeholder, exam, fill-placeholder, oblique-project, plot,
+  question, section, space-axes, step, subquestion,
 )
+
+#show: exam.with(
+  subject: "数学",
+  year: 2026,
+  type: "普通高等学校招生全国统一考试",
+  name: "全国一卷",
+  source: "https://github.com/deekur/gaokaomath/blob/main/普通高考/2026/2026全国1(山东%2C广东%2C湖南%2C湖北%2C河北%2C江苏%2C福建%2C浙江%2C河南%2C江西%2C安徽).pdf",
+  regions: (
+    "山东",
+    "广东",
+    "湖南",
+    "湖北",
+    "河北",
+    "江苏",
+    "福建",
+    "浙江",
+    "河南",
+    "江西",
+    "安徽",
+  ),
+)
+
 // 所有顶点使用三维坐标；中点由端点计算，投影只影响展示。
 #let prism-figure(auxiliary: false) = {
   set text(size: 9pt)
-  cetz.canvas(length: 13mm, {
+  cetz.canvas(length: 11mm, {
     import cetz.draw: *
     let a = (2, 0, 0)
     let b = (0, 2, 0)
@@ -16,8 +38,9 @@
     let d = a.zip(b).map(((x, y)) => (x + y) / 2)
     let e = a.zip(c1).map(((x, y)) => (x + y) / 2)
     let h = (0, 1, 0)
-    ortho(x: -65deg, y: 0deg, z: -135deg, sorted: false, {
-      set-style(stroke: 0.65pt)
+    // AB 水平、侧棱竖直，C 位于右后方，贴近原卷布局。
+    oblique-project((-0.85, -0.45), (0.55, -0.45), (0, 1), {
+      set-style(stroke: (thickness: 0.6pt, join: "round", cap: "butt"))
       line(a, c, b, stroke: (dash: "dashed"))
       line(c, c1, stroke: (dash: "dashed"))
       line(a, c1, stroke: (dash: "dashed"))
@@ -25,15 +48,7 @@
       line(a1, b1)
       line(d, e, stroke: (dash: "dashed"))
       if auxiliary {
-        for (point, label, anchor) in (
-          ((2.7, 0, 0), $x$, "east"),
-          ((0, 2.7, 0), $y$, "west"),
-          ((0, 0, 2.6), $z$, "south"),
-        ) {
-          let start = point.map(value => if value == 0 { 0 } else { 2 })
-          line(start, point, stroke: 0.4pt, mark: (end: ">"))
-          content(point, label, anchor: anchor, padding: 0.1)
-        }
+        space-axes((2, 2, 2), (2.7, 2.7, 2.6))
         line(b, c1, stroke: (dash: "dashed"))
         line(d, h, stroke: (dash: "dashed"))
         line((0.15, 1, 0), (0.15, 1.15, 0), (0, 1.15, 0))
@@ -61,31 +76,42 @@
   cetz.canvas(length: 10mm, {
     import cetz.draw: *
     let g(x) = 1 - (x + 1) * calc.exp(x)
-    line((-4.5, 0), (1.1, 0), stroke: 0.4pt, mark: (end: ">"))
-    line((0, -2.2), (0, 1.8), stroke: 0.4pt, mark: (end: ">"))
-    line((-4.4, 1), (-2.8, 1), stroke: (dash: "dashed", thickness: 0.4pt))
-    line((-2, 0), (-2, g(-2)), (0, g(-2)), stroke: (
-      dash: "dashed",
-      thickness: 0.4pt,
+    set-style(axes: (
+      stroke: 0.6pt,
+      padding: 0,
+      overshoot: 0.2,
+      shared-zero: $O$,
     ))
-    line(
-      ..range(0, 101).map(i => {
-        let x = -4.4 + i * 0.05
-        (x, g(x))
-      }),
-      stroke: 0.7pt,
+    plot.plot(
+      size: (5.6, 4),
+      axis-style: "school-book",
+      x-min: -4.5,
+      x-max: 1.1,
+      y-min: -2.2,
+      y-max: 1.8,
+      x-label: $x$,
+      y-label: $y$,
+      x-tick-step: none,
+      y-tick-step: none,
+      {
+        plot.add(g, domain: (-4.4, 0.6), style: (stroke: 0.6pt))
+        plot.annotate(resize: false, {
+          line((-4.4, 1), (-2.8, 1), stroke: (dash: "dashed", thickness: 0.6pt))
+          line((-2, 0), (-2, g(-2)), (0, g(-2)), stroke: (
+            dash: "dashed",
+            thickness: 0.6pt,
+          ))
+          for (point, label, anchor) in (
+            ((-2, 0), $-2$, "north"),
+            ((0, g(-2)), $1 + e^(-2)$, "west"),
+            ((-4.4, 1), $1$, "east"),
+            ((-3.2, 1.55), $y = g(x)$, "south"),
+          ) {
+            content(point, label, anchor: anchor, padding: 0.1)
+          }
+        })
+      },
     )
-    for (point, label, anchor) in (
-      ((1.1, 0), $x$, "north"),
-      ((0, 1.8), $y$, "east"),
-      ((0, 0), $O$, "north-east"),
-      ((-2, 0), $-2$, "north"),
-      ((0, g(-2)), $1 + e^(-2)$, "west"),
-      ((-4.4, 1), $1$, "east"),
-      ((-3.2, 1.55), $y = g(x)$, "south"),
-    ) {
-      content(point, label, anchor: anchor, padding: 0.1)
-    }
   })
 }
 
@@ -106,8 +132,8 @@
         let c = (0, 0, 2)
         let g = (0, -calc.sqrt(3) / 2, 0.5)
         let d = (3, -calc.sqrt(3) / 2, 0.5)
-        ortho(x: -25deg, y: -15deg, z: 0deg, sorted: false, {
-          set-style(stroke: 0.65pt)
+        oblique-project((1, 0), (0.5, 1.1), (0, 1), {
+          set-style(stroke: (thickness: 0.6pt, join: "round", cap: "butt"))
           line(a, e)
           line(e, f, stroke: (dash: "dashed"))
           line(f, b)
@@ -135,14 +161,14 @@
         let e = (0, 0)
         let g = (1, 0)
         let c = (1, calc.sqrt(3))
-        line(e, g, c, e, stroke: 0.65pt)
-        line((0.86, 0), (0.86, 0.14), (1, 0.14), stroke: 0.5pt)
+        line(e, g, c, e, stroke: 0.6pt)
+        line((0.86, 0), (0.86, 0.14), (1, 0.14), stroke: 0.6pt)
         line(
           ..range(0, 61, step: 3).map(t => (
             0.3 * calc.cos(t * 1deg),
             0.3 * calc.sin(t * 1deg),
           )),
-          stroke: 0.5pt,
+          stroke: 0.6pt,
         )
         for (point, label, anchor) in (
           (e, $E$, "north-east"),
@@ -166,35 +192,52 @@
   cetz.canvas(length: 15mm, {
     import cetz.draw: *
     let direction = (0.5, calc.sqrt(3) / 2)
-    set-style(stroke: 0.65pt)
-    line((-2.4, 0), (2.5, 0), stroke: 0.35pt, mark: (end: ">"))
-    line((0, -1.3), (0, 3.1), stroke: 0.35pt, mark: (end: ">"))
-    for center in ((-1, 0), (1, 0), (0, calc.sqrt(3))) {
-      circle(center, radius: 1)
-      circle(center, radius: 0.025, fill: black)
-      let projection = center.zip(direction).map(((a, b)) => a * b).sum()
-      let foot = direction.map(v => v * projection)
-      line(center, foot, stroke: (dash: "dashed", thickness: 0.45pt))
-    }
-    line(
-      direction.map(v => -1.35 * v),
-      direction.map(v => 2.75 * v),
-      stroke: 0.45pt,
+    set-style(stroke: 0.6pt)
+    set-style(axes: (
+      stroke: 0.6pt,
+      padding: 0,
+      overshoot: 0.2,
+      shared-zero: $O$,
+    ))
+    plot.plot(
+      size: (4.9, 4.4),
+      axis-style: "school-book",
+      x-min: -2.4,
+      x-max: 2.5,
+      y-min: -1.3,
+      y-max: 3.1,
+      x-label: $x$,
+      y-label: $y$,
+      x-tick-step: none,
+      y-tick-step: none,
+      {
+        plot.annotate(resize: false, {
+          for center in ((-1, 0), (1, 0), (0, calc.sqrt(3))) {
+            circle(center, radius: 1)
+            circle(center, radius: 0.025, fill: black)
+            let projection = center.zip(direction).map(((a, b)) => a * b).sum()
+            let foot = direction.map(v => v * projection)
+            line(center, foot, stroke: (dash: "dashed", thickness: 0.6pt))
+          }
+          line(
+            direction.map(v => -1.35 * v),
+            direction.map(v => 2.75 * v),
+            stroke: 0.6pt,
+          )
+          for (point, label, anchor) in (
+            ((-1, 0), $(-1, 0)$, "north"),
+            ((1, 0), $(1, 0)$, "north"),
+            ((0, calc.sqrt(3)), $(0, sqrt(3))$, "east"),
+            ((-1.9, -0.65), $C_1$, "east"),
+            ((1.9, -0.65), $C_2$, "west"),
+            ((-0.9, 2.35), $C_3$, "east"),
+            (direction.map(v => 2.75 * v), $l: y = sqrt(3)x$, "west"),
+          ) {
+            content(point, label, anchor: anchor, padding: 0.1)
+          }
+        })
+      },
     )
-    for (point, label, anchor) in (
-      ((2.5, 0), $x$, "north"),
-      ((0, 3.1), $y$, "east"),
-      ((0, 0), $O$, "north-west"),
-      ((-1, 0), $(-1, 0)$, "north"),
-      ((1, 0), $(1, 0)$, "north"),
-      ((0, calc.sqrt(3)), $(0, sqrt(3))$, "east"),
-      ((-1.9, -0.65), $C_1$, "east"),
-      ((1.9, -0.65), $C_2$, "west"),
-      ((-0.9, 2.35), $C_3$, "east"),
-      (direction.map(v => 2.75 * v), $l: y = sqrt(3)x$, "west"),
-    ) {
-      content(point, label, anchor: anchor, padding: 0.1)
-    }
   })
 }
 
@@ -208,26 +251,44 @@
     let c = (1, 2 * calc.sqrt(2))
     let d = (-3 * calc.sqrt(2), 0)
     let e = (-4 * calc.sqrt(2), 2)
-    set-style(stroke: 0.65pt)
-    line((-6.2, 0), (3.9, 0), stroke: 0.4pt, mark: (end: ">"))
-    line((0, -0.6), (0, 3.5), stroke: 0.4pt, mark: (end: ">"))
-    content((3.9, 0), $x$, anchor: "west", padding: 0.1)
-    content((0, 3.5), $y$, anchor: "east", padding: 0.1)
-    line(e, d, b, c, a, e)
-    line(e, c, stroke: (dash: "dashed"))
-    // 在 A 处标出 AE 与 AC 的直角。
-    let u = c.map(x => x / 3 * 0.25)
-    let v = e.map(x => x / 6 * 0.25)
-    line(u, u.zip(v).map(((x, y)) => x + y), v)
-    for (point, label, anchor) in (
-      (a, $A$, "north-east"),
-      (b, $B$, "north"),
-      (c, $C$, "south"),
-      (d, $D$, "north"),
-      (e, $E$, "south-east"),
-    ) {
-      content(point, label, anchor: anchor, padding: 0.12)
-    }
+    set-style(stroke: 0.6pt)
+    set-style(axes: (
+      stroke: 0.6pt,
+      padding: 0,
+      overshoot: 0.2,
+      shared-zero: false,
+    ))
+    plot.plot(
+      size: (10.1, 4.1),
+      axis-style: "school-book",
+      x-min: -6.2,
+      x-max: 3.9,
+      y-min: -0.6,
+      y-max: 3.5,
+      x-label: $x$,
+      y-label: $y$,
+      x-tick-step: none,
+      y-tick-step: none,
+      {
+        plot.annotate(resize: false, {
+          line(d, e, a, c, b)
+          line(e, c, stroke: (dash: "dashed"))
+          // 在 A 处标出 AE 与 AC 的直角。
+          let u = c.map(x => x / 3 * 0.25)
+          let v = e.map(x => x / 6 * 0.25)
+          line(u, u.zip(v).map(((x, y)) => x + y), v)
+          for (point, label, anchor) in (
+            (a, $A$, "north-east"),
+            (b, $B$, "north"),
+            (c, $C$, "south"),
+            (d, $D$, "north"),
+            (e, $E$, "south-east"),
+          ) {
+            content(point, label, anchor: anchor, padding: 0.12)
+          }
+        })
+      },
+    )
   })
 }
 
@@ -240,48 +301,44 @@
     let p = (0.5, 3 * calc.sqrt(5) / 4)
     let q = (-1.75, -3 * calc.sqrt(5) / 8)
     let r = p.map(x => -x)
-    set-style(stroke: 0.65pt)
-    circle((0, 0), radius: (2, calc.sqrt(3)))
-    line((-2.5, 0), (2.5, 0), stroke: 0.4pt, mark: (end: ">"))
-    line((0, -2.1), (0, 2.1), stroke: 0.4pt, mark: (end: ">"))
-    line((-2, -k), (0.85, 1.85 * k))
-    line(p, r, q)
-    line(q, (0, 0), stroke: (dash: "dashed"))
-    for (point, label, anchor) in (
-      ((2.5, 0), $x$, "north"),
-      ((0, 2.1), $y$, "east"),
-      ((0, 0), $O$, "north-west"),
-      ((-1, 0), $F$, "south-east"),
-      (p, $P$, "south-east"),
-      (q, $Q$, "north-east"),
-      (r, $R$, "north-west"),
-      ((0.85, 1.85 * k), $l$, "west"),
-    ) {
-      content(point, label, anchor: anchor, padding: 0.1)
-    }
+    set-style(stroke: 0.6pt)
+    set-style(axes: (
+      stroke: 0.6pt,
+      padding: 0,
+      overshoot: 0.2,
+      shared-zero: $O$,
+    ))
+    plot.plot(
+      size: (5, 4.2),
+      axis-style: "school-book",
+      x-min: -2.5,
+      x-max: 2.5,
+      y-min: -2.1,
+      y-max: 2.1,
+      x-label: $x$,
+      y-label: $y$,
+      x-tick-step: none,
+      y-tick-step: none,
+      {
+        plot.annotate(resize: false, {
+          circle((0, 0), radius: (2, calc.sqrt(3)))
+          line((-2, -k), (0.85, 1.85 * k))
+          line(p, r, q)
+          line(q, (0, 0), stroke: (dash: "dashed"))
+          for (point, label, anchor) in (
+            ((-1, 0), $F$, "south-east"),
+            (p, $P$, "south-east"),
+            (q, $Q$, "north-east"),
+            (r, $R$, "north-west"),
+            ((0.85, 1.85 * k), $l$, "west"),
+          ) {
+            content(point, label, anchor: anchor, padding: 0.1)
+          }
+        })
+      },
+    )
   })
 }
-
-#show: exam.with(
-  subject: "数学",
-  year: 2026,
-  type: "普通高等学校招生全国统一考试",
-  name: "全国一卷",
-  source: "https://github.com/deekur/gaokaomath/blob/main/普通高考/2026/2026全国1(山东%2C广东%2C湖南%2C湖北%2C河北%2C江苏%2C福建%2C浙江%2C河南%2C江西%2C安徽).pdf",
-  regions: (
-    "山东",
-    "广东",
-    "湖南",
-    "湖北",
-    "河北",
-    "江苏",
-    "福建",
-    "浙江",
-    "河南",
-    "江西",
-    "安徽",
-  ),
-)
 
 #section[选择题：本题共 8 小题，每小题 5 分，共 40 分。在每小题给出的四个选项中，只有一项是符合题目要求的。]
 
@@ -371,7 +428,7 @@
       $g$ 在 $(-infinity, -2)$ 上递增，在 $(-2, +infinity)$ 上递减。#linebreak()
       又 $g(0) = 0$，且 $x$ 趋于负无穷时 $g(x)$ 趋于 $1$。#linebreak()
       $therefore x < 0$ 时 $g(x) > 0$；$x > 0$ 时 $g(x) < 0$。
-      #align(center, derivative-figure())
+      #figure(derivative-figure())
       $f'(x)$ 与 $g(x)$ 同号，故 $f$ 先增后减，最大值为 $f(0) = 1$。#linebreak()
       故选 B。
     ]
@@ -448,7 +505,7 @@
     过 $C$、$D$ 分别作 $C E perp A B$、$D F perp A B$，垂足为 $E$、$F$。#linebreak()
     将 $arrow(F D)$ 平移到 $E$，得 $arrow(E G) = arrow(F D)$，连接 $C G$、$D G$。#linebreak()
     则 $C E = 2$，$E G = D F = 1$，$angle C E G = 60 degree$。
-    #align(center, dihedral-figure())
+    #figure(dihedral-figure())
     #step[选项 A][
       取 $E = F$，使 $A E = 2$，且 $E$ 在射线 $A B$ 上。此时 $D = G$。#linebreak()
       由勾股定理，$A C = sqrt(8)$，$A D = sqrt(5)$。#linebreak()
@@ -496,7 +553,7 @@
     $d_3 = abs(b - sqrt(3))/sqrt(1 + k^2)$。#linebreak()
     由题意，$d_i < 1$，且弦长 $s_i = 2 sqrt(1 - d_i^2)$（$i = 1, 2, 3$）。#linebreak()
     下图取 $l: y = sqrt(3)x$，示意 $b = 0$ 时的情形；此时三条弦长均为 $1$。
-    #align(center, circles-figure())
+    #figure(circles-figure())
     #step[选项 A][
       取 $k = sqrt(3)/3$。#linebreak()
       由 $d_1 < 1$、$d_2 < 1$，得 $-1/sqrt(3) < b < 1/sqrt(3)$。#linebreak()
@@ -599,9 +656,9 @@
 
 #question(
   "solution",
-  stem: [
-    （13 分）如图，在直三棱柱 $A B C - A_1 B_1 C_1$ 中，$angle A C B = 90 degree$，$A C = B C$，$D$、$E$ 分别为 $A B$、$A C_1$ 的中点。
-    #align(center, prism-figure())
+  score: 13,
+  stem: [如图，在直三棱柱 $A B C - A_1 B_1 C_1$ 中，$angle A C B = 90 degree$，$A C = B C$，$D$、$E$ 分别为 $A B$、$A C_1$ 的中点。
+    #figure(prism-figure())
   ],
   parts: (
     subquestion(
@@ -621,7 +678,7 @@
           设 $A C = B C = a > 0$。#linebreak()
           则 $A(a, 0, 0)$，$B(0, a, 0)$，$C_1(0, 0, 2)$。#linebreak()
           两中点为 $D(a/2, a/2, 0)$，$E(a/2, 0, 1)$。
-          #align(center, prism-figure(auxiliary: true))
+          #figure(prism-figure(auxiliary: true))
         ]
         #step[利用线面角求边长][
           平面 $A C C_1 A_1$ 的法向量为 $(0, 1, 0)$，而 $arrow(D E) = (0, -a/2, 1)$。#linebreak()
@@ -639,7 +696,8 @@
 
 #question(
   "solution",
-  stem: [（15 分）已知在 $triangle A B C$ 中，$A B = 3$，$B C = 2 sqrt(3)$，$cos B = sqrt(3)/3$。],
+  score: 15,
+  stem: [已知在 $triangle A B C$ 中，$A B = 3$，$B C = 2 sqrt(3)$，$cos B = sqrt(3)/3$。],
   parts: (
     subquestion(
       stem: [求 $cos A$；],
@@ -656,7 +714,7 @@
         #step[建立平面直角坐标系][
           以 $A$ 为原点，$A B$ 的方向为 $x$ 轴正方向，取 $C$ 在 $x$ 轴上方，则 $A(0, 0)$，$B(3, 0)$。#linebreak()
           由 $A C = 3$、$cos A = 1/3$，得 $C(1, 2 sqrt(2))$。
-          #align(center, triangle-figure())
+          #figure(triangle-figure())
         ]
         #step[确定点 $E$][
           设 $D(-t, 0)$（$t > 0$）。#linebreak()
@@ -677,7 +735,8 @@
 
 #question(
   "solution",
-  stem: [（15 分）设整数 $N >= 2$。某同学用一个球进行投篮练习，至多投篮 $N$ 次，当且仅当投中 $1$ 次时或 $N$ 次均未投中时，停止练习。设该同学每次投中的概率为 $p$（$0 < p < 1$），各次投中与否相互独立。记 $X$ 为停止练习时该同学的投篮次数。],
+  score: 15,
+  stem: [设整数 $N >= 2$。某同学用一个球进行投篮练习，至多投篮 $N$ 次，当且仅当投中 $1$ 次时或 $N$ 次均未投中时，停止练习。设该同学每次投中的概率为 $p$（$0 < p < 1$），各次投中与否相互独立。记 $X$ 为停止练习时该同学的投篮次数。],
   parts: (
     subquestion(
       stem: [当 $N = 4$，$p = 1/3$ 时，求 $X$ 的分布列；],
@@ -728,7 +787,8 @@
 
 #question(
   "solution",
-  stem: [（17 分）已知椭圆 $C: x^2/a^2 + y^2/b^2 = 1$（$a > b > 0$）的左焦点为 $F(-1, 0)$，离心率为 $1/2$。],
+  score: 17,
+  stem: [已知椭圆 $C: x^2/a^2 + y^2/b^2 = 1$（$a > b > 0$）的左焦点为 $F(-1, 0)$，离心率为 $1/2$。],
   parts: (
     subquestion(
       stem: [求 $C$ 的方程；],
@@ -787,7 +847,7 @@
         $(3 + 4k^2)x^2 + 8k^2 x + 4k^2 - 12 = 0$，#linebreak()
         $therefore x_1 + x_2 = -(8k^2)/(3 + 4k^2)$，$x_1 x_2 = (4k^2 - 12)/(3 + 4k^2)$。#linebreak()
         下图取（i）求得的直线，展示 $P$、$Q$、$R$、$F$、$O$ 的位置关系。
-        #align(center, ellipse-figure())
+        #figure(ellipse-figure())
       ],
     ),
   ),
@@ -795,7 +855,8 @@
 
 #question(
   "solution",
-  stem: [（17 分）已知函数 $f(x)$ 的定义域为 $RR$，且当 $x < 0$ 时，$f(x) = 2^x$。对任意 $x_0 in RR$，定义集合 $D(x_0) = {d in RR | f(x_0 + d) > f(x_0)}$。],
+  score: 17,
+  stem: [已知函数 $f(x)$ 的定义域为 $RR$，且当 $x < 0$ 时，$f(x) = 2^x$。对任意 $x_0 in RR$，定义集合 $D(x_0) = {d in RR | f(x_0 + d) > f(x_0)}$。],
   parts: (
     subquestion(
       stem: [若当 $x >= 0$ 时，$f(x) = 1 - x$，求 $D(-1)$；],
