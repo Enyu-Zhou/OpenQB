@@ -305,7 +305,6 @@
     #table(
       columns: 5,
       align: center,
-      stroke: figure-style.thickness,
       [年龄], [剪纸], [摄影], [画画], [人数],
       [$[25,35)$], [], [8], [], [45],
       [$[35,45)$], [], [10], [], [55],

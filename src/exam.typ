@@ -1,3 +1,5 @@
+#import "figure.typ": figure-style
+
 #let exam(
   body,
   subject: none,
@@ -50,6 +52,7 @@
     bottom-edge: "bounds",
   )
   set par(leading: 0.5em)
+  set table(stroke: figure-style.thickness)
   // 圈号使用中文字体，避免西文字体的字形超出占位而挤压相邻文字。
   show regex("[①-⑳]"): set text(font: "Source Han Serif SC")
   // 公式中的中文回退到宋体，避免使用系统默认黑体。

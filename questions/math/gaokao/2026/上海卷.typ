@@ -245,7 +245,6 @@
     #table(
       columns: 4,
       align: center,
-      stroke: figure-style.thickness,
       $X$, $-1$, $0$, $1$,
       $P$, $a$, $0.3$, $b$,
     )
@@ -343,7 +342,6 @@
       #table(
         columns: (auto, ..range(9).map(_ => 1fr)),
         align: center,
-        stroke: figure-style.thickness,
         inset: 3pt,
         [颗粒物密度], [101.02],
         [87.02], [57.47],
@@ -525,7 +523,6 @@
           #table(
             columns: 2,
             align: (center, left),
-            stroke: figure-style.thickness,
             [排列], [等价条件],
             [$(1, 2, 3)$], [恒成立],
             [$(1, 3, 2)$], [$f_2 <= f_3$],
