@@ -1,6 +1,9 @@
 #import "@preview/cetz:0.5.2": draw
 #import "@preview/cetz-plot:0.1.4": axes
 
+// 插图的统一线宽与虚线节奏。
+#let figure-style = (thickness: 0.6pt, dash: (2pt, 1pt))
+
 // 指定三个空间单位向量在纸面上的方向，真实三维点位统一采用斜投影。
 #let oblique-project(x, y, z, body) = {
   draw.ortho(x: 0deg, y: 0deg, z: 0deg, sorted: false, {
@@ -38,7 +41,7 @@
           grid: false,
         )),
         size: (ends.at(i) - starts.at(i), 1),
-        stroke: 0.6pt,
+        stroke: figure-style.thickness,
         padding: 0,
         overshoot: 0,
         shared-zero: false,

@@ -1,6 +1,6 @@
 #import "/src/lib.typ": (
-  cetz, choice-placeholder, exam, fill-placeholder, oblique-project, question,
-  section, space-axes, step, subquestion,
+  cetz, choice-placeholder, exam, figure-style, fill-placeholder,
+  oblique-project, question, section, space-axes, step, subquestion,
 )
 
 #show: exam.with(
@@ -16,7 +16,7 @@
   set text(size: 9pt)
   cetz.canvas(length: 10mm, {
     import cetz.draw: *
-    set-style(stroke: (thickness: 0.6pt, join: "round"))
+    set-style(stroke: (thickness: figure-style.thickness, join: "round"))
     let a = (0, 0)
     let b = (4, 0)
     let d = (-0.2, calc.sqrt(0.96))
@@ -49,8 +49,8 @@
     let c = (-calc.sqrt(3), 0, 0)
     let d = (calc.sqrt(3), 0, 0)
     oblique-project((1, 0), (0.3, 0.65), (0, 1), {
-      set-style(stroke: (thickness: 0.6pt, join: "round"))
-      line(c, d, stroke: (dash: "dashed"))
+      set-style(stroke: (thickness: figure-style.thickness, join: "round"))
+      line(c, d, stroke: (dash: figure-style.dash))
       line(a, c, b, d, a, b)
       for (p, label, anchor) in (
         (a, $A$, "south"),
@@ -78,12 +78,12 @@
     let e = (1, 0, calc.sqrt(2))
     let p = (0.5, 0.5, calc.sqrt(2))
     oblique-project((-0.85, -0.4), (0.7, -0.4), (0, 1), {
-      set-style(stroke: (thickness: 0.6pt, join: "round"))
-      line(b, a, c, stroke: (dash: "dashed"))
-      line(a, a1, stroke: (dash: "dashed"))
+      set-style(stroke: (thickness: figure-style.thickness, join: "round"))
+      line(b, a, c, stroke: (dash: figure-style.dash))
+      line(a, a1, stroke: (dash: figure-style.dash))
       line(b, c, c1, a1, b1, b)
       line(b1, c1)
-      line(e, d, p, a, stroke: (dash: "dashed"))
+      line(e, d, p, a, stroke: (dash: figure-style.dash))
       line(e, p)
       if auxiliary { space-axes((2, 2, calc.sqrt(2)), (2.65, 2.65, 2.05)) }
       for (point, label, anchor) in (

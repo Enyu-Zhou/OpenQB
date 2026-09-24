@@ -1,6 +1,6 @@
 #import "/src/lib.typ": (
-  cetz, choice-placeholder, exam, fill-placeholder, oblique-project, plot,
-  question, section, space-axes, step, subquestion,
+  cetz, choice-placeholder, exam, figure-style, fill-placeholder,
+  oblique-project, plot, question, section, space-axes, step, subquestion,
 )
 
 #show: exam.with(
@@ -40,17 +40,21 @@
     let h = (0, 1, 0)
     // AB 水平、侧棱竖直，C 位于右后方，贴近原卷布局。
     oblique-project((-0.85, -0.45), (0.55, -0.45), (0, 1), {
-      set-style(stroke: (thickness: 0.6pt, join: "round", cap: "butt"))
-      line(a, c, b, stroke: (dash: "dashed"))
-      line(c, c1, stroke: (dash: "dashed"))
-      line(a, c1, stroke: (dash: "dashed"))
+      set-style(stroke: (
+        thickness: figure-style.thickness,
+        join: "round",
+        cap: "butt",
+      ))
+      line(a, c, b, stroke: (dash: figure-style.dash))
+      line(c, c1, stroke: (dash: figure-style.dash))
+      line(a, c1, stroke: (dash: figure-style.dash))
       line(a, b, b1, c1, a1, a)
       line(a1, b1)
-      line(d, e, stroke: (dash: "dashed"))
+      line(d, e, stroke: (dash: figure-style.dash))
       if auxiliary {
         space-axes((2, 2, 2), (2.7, 2.7, 2.6))
-        line(b, c1, stroke: (dash: "dashed"))
-        line(d, h, stroke: (dash: "dashed"))
+        line(b, c1, stroke: (dash: figure-style.dash))
+        line(d, h, stroke: (dash: figure-style.dash))
         line((0.15, 1, 0), (0.15, 1.15, 0), (0, 1.15, 0))
         content(h, $H$, anchor: "south-west", padding: 0.1)
       }
@@ -77,7 +81,11 @@
     import cetz.draw: *
     let g(x) = 1 - (x + 1) * calc.exp(x)
     set-style(axes: (
-      stroke: 0.6pt,
+      stroke: figure-style.thickness,
+      tick: (
+        stroke: figure-style.thickness,
+        minor-stroke: figure-style.thickness,
+      ),
       padding: 0,
       overshoot: 0.2,
       shared-zero: $O$,
@@ -94,12 +102,17 @@
       x-tick-step: none,
       y-tick-step: none,
       {
-        plot.add(g, domain: (-4.4, 0.6), style: (stroke: 0.6pt))
+        plot.add(g, domain: (-4.4, 0.6), style: (
+          stroke: figure-style.thickness,
+        ))
         plot.annotate(resize: false, {
-          line((-4.4, 1), (-2.8, 1), stroke: (dash: "dashed", thickness: 0.6pt))
+          line((-4.4, 1), (-2.8, 1), stroke: (
+            dash: figure-style.dash,
+            thickness: figure-style.thickness,
+          ))
           line((-2, 0), (-2, g(-2)), (0, g(-2)), stroke: (
-            dash: "dashed",
-            thickness: 0.6pt,
+            dash: figure-style.dash,
+            thickness: figure-style.thickness,
           ))
           for (point, label, anchor) in (
             ((-2, 0), $-2$, "north"),
@@ -133,14 +146,18 @@
         let g = (0, -calc.sqrt(3) / 2, 0.5)
         let d = (3, -calc.sqrt(3) / 2, 0.5)
         oblique-project((1, 0), (0.5, 1.1), (0, 1), {
-          set-style(stroke: (thickness: 0.6pt, join: "round", cap: "butt"))
+          set-style(stroke: (
+            thickness: figure-style.thickness,
+            join: "round",
+            cap: "butt",
+          ))
           line(a, e)
-          line(e, f, stroke: (dash: "dashed"))
+          line(e, f, stroke: (dash: figure-style.dash))
           line(f, b)
           line(c, f, d, g, c)
           line(c, d)
-          line(c, e, g, stroke: (dash: "dashed"))
-          line(e, d, stroke: (dash: "dashed"))
+          line(c, e, g, stroke: (dash: figure-style.dash))
+          line(e, d, stroke: (dash: figure-style.dash))
           for (point, label, anchor) in (
             (a, $A$, "east"),
             (b, $B$, "west"),
@@ -161,14 +178,14 @@
         let e = (0, 0)
         let g = (1, 0)
         let c = (1, calc.sqrt(3))
-        line(e, g, c, e, stroke: 0.6pt)
-        line((0.86, 0), (0.86, 0.14), (1, 0.14), stroke: 0.6pt)
+        line(e, g, c, e, stroke: figure-style.thickness)
+        line((0.86, 0), (0.86, 0.14), (1, 0.14), stroke: figure-style.thickness)
         line(
           ..range(0, 61, step: 3).map(t => (
             0.3 * calc.cos(t * 1deg),
             0.3 * calc.sin(t * 1deg),
           )),
-          stroke: 0.6pt,
+          stroke: figure-style.thickness,
         )
         for (point, label, anchor) in (
           (e, $E$, "north-east"),
@@ -192,9 +209,13 @@
   cetz.canvas(length: 15mm, {
     import cetz.draw: *
     let direction = (0.5, calc.sqrt(3) / 2)
-    set-style(stroke: 0.6pt)
+    set-style(stroke: figure-style.thickness)
     set-style(axes: (
-      stroke: 0.6pt,
+      stroke: figure-style.thickness,
+      tick: (
+        stroke: figure-style.thickness,
+        minor-stroke: figure-style.thickness,
+      ),
       padding: 0,
       overshoot: 0.2,
       shared-zero: $O$,
@@ -217,15 +238,18 @@
             circle(center, radius: 0.025, fill: black)
             let projection = center.zip(direction).map(((a, b)) => a * b).sum()
             let foot = direction.map(v => v * projection)
-            line(center, foot, stroke: (dash: "dashed", thickness: 0.6pt))
+            line(center, foot, stroke: (
+              dash: figure-style.dash,
+              thickness: figure-style.thickness,
+            ))
           }
           line(
             direction.map(v => -1.35 * v),
             direction.map(v => 2.75 * v),
-            stroke: 0.6pt,
+            stroke: figure-style.thickness,
           )
           for (point, label, anchor) in (
-            ((-1, 0), $(-1, 0)$, "north"),
+            ((-1, 0), $(-1, 0)$, "north-east"),
             ((1, 0), $(1, 0)$, "north"),
             ((0, calc.sqrt(3)), $(0, sqrt(3))$, "east"),
             ((-1.9, -0.65), $C_1$, "east"),
@@ -251,9 +275,13 @@
     let c = (1, 2 * calc.sqrt(2))
     let d = (-3 * calc.sqrt(2), 0)
     let e = (-4 * calc.sqrt(2), 2)
-    set-style(stroke: 0.6pt)
+    set-style(stroke: figure-style.thickness)
     set-style(axes: (
-      stroke: 0.6pt,
+      stroke: figure-style.thickness,
+      tick: (
+        stroke: figure-style.thickness,
+        minor-stroke: figure-style.thickness,
+      ),
       padding: 0,
       overshoot: 0.2,
       shared-zero: false,
@@ -272,7 +300,7 @@
       {
         plot.annotate(resize: false, {
           line(d, e, a, c, b)
-          line(e, c, stroke: (dash: "dashed"))
+          line(e, c, stroke: (dash: figure-style.dash))
           // 在 A 处标出 AE 与 AC 的直角。
           let u = c.map(x => x / 3 * 0.25)
           let v = e.map(x => x / 6 * 0.25)
@@ -301,9 +329,13 @@
     let p = (0.5, 3 * calc.sqrt(5) / 4)
     let q = (-1.75, -3 * calc.sqrt(5) / 8)
     let r = p.map(x => -x)
-    set-style(stroke: 0.6pt)
+    set-style(stroke: figure-style.thickness)
     set-style(axes: (
-      stroke: 0.6pt,
+      stroke: figure-style.thickness,
+      tick: (
+        stroke: figure-style.thickness,
+        minor-stroke: figure-style.thickness,
+      ),
       padding: 0,
       overshoot: 0.2,
       shared-zero: $O$,
@@ -324,7 +356,7 @@
           circle((0, 0), radius: (2, calc.sqrt(3)))
           line((-2, -k), (0.85, 1.85 * k))
           line(p, r, q)
-          line(q, (0, 0), stroke: (dash: "dashed"))
+          line(q, (0, 0), stroke: (dash: figure-style.dash))
           for (point, label, anchor) in (
             ((-1, 0), $F$, "south-east"),
             (p, $P$, "south-east"),
