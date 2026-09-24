@@ -2,11 +2,16 @@ name: Typst
 
 on:
   push:
-    branches: ['**']
+    branches: ['**', '!pdf']
   pull_request:
 
 permissions:
-  contents: read
+  contents: write
+
+# 串行运行同一分支，避免并发覆盖 PDF 快照。
+concurrency:
+  group: typst-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   check:
@@ -28,3 +33,9 @@ jobs:
         run: ./scripts/lint.sh
       - name: Build PDF
         run: ./scripts/build.sh
+      - name: Publish PDF branch
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: ./scripts/publish-pdf.sh

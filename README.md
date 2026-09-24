@@ -4,6 +4,12 @@ OpenQB（Open Question Bank）是一个面向中国教育与学习场景的开�
 
 贡献前请阅读[贡献指南](CONTRIBUTING.md)。
 
+## 下载 PDF
+
+在 [PDF 分支](https://github.com/Enyu-Zhou/OpenQB/tree/pdf) 按学科、考试类型和年份浏览，可预览并单独下载每份试卷及解析版，无需安装编译工具。
+
+默认分支通过格式检查和编译后自动更新 `pdf` 分支，保留原目录结构，仅保留最新快照。
+
 ## 快速开始
 
 安装 [Homebrew](https://brew.sh/) 后执行：

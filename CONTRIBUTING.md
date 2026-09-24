@@ -99,6 +99,8 @@
 
 ### CI
 
-每次 push 和 PR 都会通过 Homebrew 安装其收录的最新稳定版工具，并运行 `./scripts/lint.sh` 和 `./scripts/build.sh`，两者均须通过。
+源码分支的每次 push 和 PR 都会通过 Homebrew 安装其收录的最新稳定版工具，并运行 `./scripts/lint.sh` 和 `./scripts/build.sh`，两者均须通过。
+
+默认分支 push 通过上述检查后，自动将试卷与解析版按原目录结构发布到 `pdf` 分支。该分支每次以单个根提交强制更新，仅保留最新快照，删除或改名的文件会同步移除；请勿手动修改，也不要对该分支禁止强制推送。PR 和其他分支不发布。
 
 Cocogitto 检查本次 push 或整个 PR 的提交，仅豁免 merge 提交。不符合格式、类型或 scope 规则时检查失败；小写和中文要求由人工评审。
