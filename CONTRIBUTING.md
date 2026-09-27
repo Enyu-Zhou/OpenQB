@@ -86,6 +86,19 @@
 ./scripts/build.sh
 ```
 
+日常只改一套试卷时，可传入相对仓库根目录的路径：
+
+```sh
+# 格式化该卷
+./scripts/format.sh questions/math/gaokao/2026/全国一卷.typ
+# 检查格式和试卷代码
+./scripts/lint.sh questions/math/gaokao/2026/全国一卷.typ
+# 生成该卷的试题版和解析版
+./scripts/build.sh questions/math/gaokao/2026/全国一卷.typ
+```
+
+不传路径时全量执行，提交前和 CI 均需全量检查。lint 和 build 跳过系统字体扫描，仅使用仓库及内置字体。
+
 ### Commit message
 
 提交遵循 [Conventional Commits](https://docs.cocogitto.io/guide/commit.html)，每次只包含一个明确目的的改动。
