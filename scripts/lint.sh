@@ -3,9 +3,14 @@ set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-typstyle --check src questions
+source ./scripts/paper-sources.sh "$@"
+if [[ "$#" -eq 0 ]]; then
+  typstyle --check src questions
+else
+  typstyle --check "${papers[@]}"
+fi
 
-while IFS= read -r -d '' source; do
-  tinymist lint --root . --font-path fonts "$source"
+for source in "${papers[@]}"; do
+  tinymist lint --root . --font-path fonts --ignore-system-fonts "$source"
   printf 'Checked %s\n' "$source"
-done < <(find questions -type f -name '*.typ' -print0)
+done

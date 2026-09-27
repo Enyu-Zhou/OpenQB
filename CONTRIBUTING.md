@@ -65,6 +65,7 @@
 
 ### 插图
 
+- 照片等非数学插图保留为 PNG，放入对应年份的 `assets/` 目录，通过 Git LFS 管理。
 - 使用 `lib.typ` 导出的 `cetz` 绘制矢量图；平面坐标轴使用 `plot` 的 `school-book` 样式，刻度、标签和断轴交由库处理。
 - 空间图保留真实三维坐标，优先用 `oblique-project` 斜投影贴近原卷布局，坐标轴使用 `space-axes`；遮挡线用虚线，标签避开图线。
 - 图表线条样式统一使用 `figure-style`，在 `src/figure.typ` 中调整；表格默认继承线宽，共享边、坐标轴和网格避免重复描线。
@@ -85,6 +86,19 @@
 # 编译试卷 PDF
 ./scripts/build.sh
 ```
+
+日常只改一套试卷时，可传入相对仓库根目录的路径：
+
+```sh
+# 格式化该卷
+./scripts/format.sh questions/math/gaokao/2026/全国一卷.typ
+# 检查格式和试卷代码
+./scripts/lint.sh questions/math/gaokao/2026/全国一卷.typ
+# 生成该卷的试题版和解析版
+./scripts/build.sh questions/math/gaokao/2026/全国一卷.typ
+```
+
+不传路径时全量执行，提交前和 CI 均需全量检查。lint 和 build 跳过系统字体扫描，仅使用仓库及内置字体。
 
 ### Commit message
 
